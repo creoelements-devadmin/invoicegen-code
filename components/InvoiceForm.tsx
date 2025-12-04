@@ -8,10 +8,10 @@ interface Props {
 }
 
 const LOGO_OPTIONS = [
-  { label: 'Creo Elements', url: 'creo-logo.png' },
-  { label: 'Little Things', url: 'Little Things Cute.png' },
-  { label: 'ArtAngle90', url: 'artangle90.png' },
-  { label: 'StoreEva', url: 'storeeva.jpg' },
+  { label: 'Creo Elements', url: '/invoicegen/creo-logo.png' },
+  { label: 'Little Things', url: '/invoicegen/Little Things Cute.png' },
+  { label: 'ArtAngle90', url: '/invoicegen/artangle90.png' },
+  { label: 'StoreEva', url: '/invoicegen/storeeva.jpg' },
 ];
 
 const InvoiceForm: React.FC<Props> = ({ data, onChange }) => {

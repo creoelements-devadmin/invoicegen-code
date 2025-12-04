@@ -13,13 +13,17 @@ const App: React.FC = () => {
 
   // Logo keyword mapping
   const LOGO_KEYWORDS = {
-    'creo': 'creo-logo.png',
-    'little': 'Little Things Cute.png',
-    'artangle90': 'artangle90.png',
-    'storeeva': 'storeeva.jpg'
+    'creo': '/invoicegen/creo-logo.png',
+    'little': '/invoicegen/Little Things Cute.png',
+    'artangle90': '/invoicegen/artangle90.png',
+    'storeeva': '/invoicegen/storeeva.jpg'
   };
 
   const LOGO_TO_KEYWORD: { [key: string]: string } = {
+    '/invoicegen/creo-logo.png': 'creo',
+    '/invoicegen/Little Things Cute.png': 'little',
+    '/invoicegen/artangle90.png': 'artangle90',
+    '/invoicegen/storeeva.jpg': 'storeeva',
     'creo-logo.png': 'creo',
     'Little Things Cute.png': 'little',
     'artangle90.png': 'artangle90',
@@ -188,7 +192,7 @@ const App: React.FC = () => {
       <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 md:px-6 z-30 shrink-0">
         <div className="flex items-center space-x-3">
             <img 
-              src="creo-logo.png" 
+              src="/invoicegen/creo-logo.png" 
               alt="Creo Elements" 
               className="h-10 object-contain"
             />

@@ -49,7 +49,7 @@ export interface InvoiceData {
 }
 
 export const INITIAL_DATA: InvoiceData = {
-  logoUrl: "creo-logo.png",
+  logoUrl: "/invoicegen/creo-logo.png",
   title: "PROFORMA INVOICE",
   date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
   invoiceNo: "CE/00/25-26",
