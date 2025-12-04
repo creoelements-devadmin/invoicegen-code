@@ -8,7 +8,7 @@ interface Props {
 }
 
 const LOGO_OPTIONS = [
-  { label: 'Creo Elements', url: '/Creo Elements.png' },
+  { label: 'Creo Elements', url: '/creo-logo.png' },
   { label: 'Little Things', url: '/Little Things Cute.png' },
   { label: 'ArtAngle90', url: '/artangle90.png' },
   { label: 'StoreEva', url: '/storeeva.jpg' },

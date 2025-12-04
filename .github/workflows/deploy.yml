@@ -1,0 +1,63 @@
+name: Build and Deploy React Folder
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:  # allows manual trigger
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout current repo
+      - name: Checkout source repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Build project
+      - name: Build project
+        run: npm run build
+
+      # 5. Deploy dist folder to another repo
+      - name: Deploy dist folder
+        env:
+          TARGET_REPO: git@github.com:creoelements-devadmin/invoicegen-compiled.git
+          DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
+        run: |
+          # Start ssh-agent and add the deploy key
+          eval "$(ssh-agent -s)"
+          echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add -
+
+          # Disable host key checking for GitHub (optional, prevents prompts)
+          mkdir -p ~/.ssh
+          echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+
+          # Configure git author
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+          # Clone target repo
+          git clone $TARGET_REPO deploy-repo
+          cd deploy-repo
+
+          # Remove old content
+          rm -rf ./*
+
+          # Copy new react build (Vite builds to dist by default)
+          cp -r ../dist/* .
+
+          # Commit and push
+          git add .
+          git commit -m "Deploy React build from main repo" || echo "Nothing to commit"
+          git push origin main
