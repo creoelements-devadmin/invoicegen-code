@@ -20,6 +20,7 @@ export interface InvoiceData {
   date: string;
   invoiceNo: string;
   gstMode: 'exclusive' | 'inclusive';
+  gstType?: 'CGST_SGST' | 'IGST';
   billedTo: {
     name: string;
     address: string; // Multi-line address
@@ -54,6 +55,7 @@ export const INITIAL_DATA: InvoiceData = {
   date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }),
   invoiceNo: "CE/00/25-26",
   gstMode: 'exclusive',
+  gstType: 'CGST_SGST',
   billedTo: {
     name: "Trupsel",
     address: "93. D.Dalamal Park,\nCuffe Parade,\nMumbai 400005",

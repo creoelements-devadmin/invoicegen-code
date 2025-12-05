@@ -109,6 +109,24 @@ const InvoiceForm: React.FC<Props> = ({ data, onChange }) => {
            </div>
 
            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">GST Type</label>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleRootChange('gstType', 'CGST_SGST')}
+                  className={`flex-1 px-3 py-2 text-xs rounded-lg border transition-all ${(data.gstType || 'CGST_SGST') === 'CGST_SGST' ? 'bg-teal-50 border-teal-500 text-teal-700 ring-1 ring-teal-500 font-semibold' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'}`}
+                >
+                  CGST + SGST
+                </button>
+                <button
+                  onClick={() => handleRootChange('gstType', 'IGST')}
+                  className={`flex-1 px-3 py-2 text-xs rounded-lg border transition-all ${data.gstType === 'IGST' ? 'bg-teal-50 border-teal-500 text-teal-700 ring-1 ring-teal-500 font-semibold' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'}`}
+                >
+                  IGST
+                </button>
+              </div>
+           </div>
+
+           <div className="mb-4">
              <div className="flex justify-between items-center mb-2">
                 <label className="block text-sm font-medium text-gray-700">Select Logo</label>
                 <label className="flex items-center space-x-2 cursor-pointer">

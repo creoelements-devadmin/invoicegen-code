@@ -1,6 +1,3 @@
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-
 // Cache for converted images to avoid re-fetching
 const imageCache = new Map<string, string>();
 
@@ -17,7 +14,6 @@ const getBase64Image = async (url: string): Promise<string> => {
   }
 
   try {
-    // All images are local (starting with /)
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`Failed to fetch: ${response.status}`);
@@ -46,14 +42,26 @@ export const generatePDF = async (elementId: string, fileName: string) => {
     return;
   }
 
-  // Clone the element to avoid modifying the original
-  const clone = input.cloneNode(true) as HTMLElement;
-  clone.style.position = 'absolute';
-  clone.style.left = '-9999px';
-  document.body.appendChild(clone);
-
   try {
-    // Convert all images to base64 before capturing
+    // Clone the element
+    const clone = input.cloneNode(true) as HTMLElement;
+    
+    // Extract invoice details for the title
+    const invoiceNoElement = clone.querySelector('.text-sm');
+    const invoiceNo = invoiceNoElement?.textContent?.replace('Invoice no:', '').trim() || '';
+    const dateElement = clone.querySelectorAll('.text-sm')[1];
+    const date = dateElement?.textContent?.replace('Date:', '').trim() || '';
+    
+    // Create a clean title for the PDF
+    const pdfTitle = invoiceNo && date ? `Invoice-${invoiceNo.replace(/\s+/g, '-')}-${date.replace(/\//g, '-')}` : fileName;
+    
+    // Store original title
+    const originalTitle = document.title;
+    
+    // Change main document title temporarily
+    document.title = pdfTitle;
+    
+    // Convert all images to base64
     const images = clone.querySelectorAll('img');
     const conversions = Array.from(images).map(async (img) => {
       if (img.src && !img.src.startsWith('data:')) {
@@ -62,47 +70,131 @@ export const generatePDF = async (elementId: string, fileName: string) => {
           img.src = base64;
         } catch (e) {
           console.warn(`Failed to convert image to base64: ${img.src}`, e);
-          // Leave the image as is if conversion fails
         }
       }
     });
 
-    // Wait for all conversions
     await Promise.all(conversions);
+
+    // Get all stylesheets from the current document
+    const styles = Array.from(document.styleSheets)
+      .map(styleSheet => {
+        try {
+          return Array.from(styleSheet.cssRules)
+            .map(rule => rule.cssText)
+            .join('\n');
+        } catch (e) {
+          console.warn('Could not access stylesheet', e);
+          return '';
+        }
+      })
+      .join('\n');
+
+    // Create an invisible iframe for printing
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'absolute';
+    iframe.style.left = '-9999px';
+    iframe.style.width = '210mm';
+    iframe.style.height = '297mm';
+    document.body.appendChild(iframe);
+
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!iframeDoc) {
+      throw new Error('Could not access iframe document');
+    }
+
+    // Write the content to the iframe
+    iframeDoc.open();
+    iframeDoc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${pdfTitle}</title>
+          <style>
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            
+            @page {
+              size: A4 portrait;
+              margin: 0;
+            }
+            
+            html {
+              width: 210mm;
+              height: 297mm;
+            }
+            
+            body {
+              margin: 0;
+              padding: 0;
+              width: 210mm;
+              height: 297mm;
+              max-width: 210mm;
+              max-height: 297mm;
+              overflow: hidden;
+            }
+            
+            @media print {
+              html, body {
+                width: 210mm;
+                height: 297mm;
+                max-width: 210mm;
+                max-height: 297mm;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+              }
+              
+              @page {
+                size: A4 portrait;
+                margin: 0;
+              }
+              
+              * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+              }
+            }
+            
+            @media screen {
+              body {
+                width: 210mm;
+                height: 297mm;
+              }
+            }
+            
+            ${styles}
+          </style>
+        </head>
+        <body>
+          ${clone.outerHTML}
+        </body>
+      </html>
+    `);
+    iframeDoc.close();
+
+    // Wait for content to render
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Focus on iframe and trigger print
+    iframe.contentWindow?.focus();
+    iframe.contentWindow?.print();
     
-    // Wait a bit for images to render
-    await new Promise(resolve => setTimeout(resolve, 100));
+    // Clean up and restore original title after a delay
+    setTimeout(() => {
+      document.title = originalTitle;
+      if (document.body.contains(iframe)) {
+        document.body.removeChild(iframe);
+      }
+    }, 1000);
 
-    // Increase scale for better quality
-    const canvas = await html2canvas(clone, {
-      scale: 2,
-      useCORS: false,
-      allowTaint: true,
-      logging: false,
-      backgroundColor: '#ffffff'
-    });
-
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    
-    // Single page only - fit to A4
-    const finalHeight = Math.min(imgHeight, pageHeight);
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, finalHeight);
-
-    pdf.save(`${fileName}.pdf`);
   } catch (error) {
     console.error("Error generating PDF:", error);
     alert("Failed to generate PDF. Please try again.");
-  } finally {
-    // Clean up the clone
-    document.body.removeChild(clone);
   }
 };
