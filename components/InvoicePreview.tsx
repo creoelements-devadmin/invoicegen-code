@@ -247,7 +247,7 @@ const InvoicePreview: React.FC<Props> = ({ data, id }) => {
                 >
                     <path
                         d="M0,40 C350,110 750,-10 1200,50 L1200,120 L0,120 Z"
-                        fill="#38b2ac" 
+                        fill="#3eb8a2" 
                         opacity="0.9"
                     />
                 </svg>
