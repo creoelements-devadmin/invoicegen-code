@@ -42,6 +42,7 @@ const App: React.FC = () => {
     params.set('date', invoiceData.date);
     params.set('invoiceNo', invoiceData.invoiceNo);
     params.set('gstMode', invoiceData.gstMode);
+    params.set('gstType', invoiceData.gstType || 'CGST_SGST');
     
     // Billed To
     params.set('btName', invoiceData.billedTo.name);
@@ -115,6 +116,7 @@ const App: React.FC = () => {
         date: params.get('date') || INITIAL_DATA.date,
         invoiceNo: params.get('invoiceNo') || INITIAL_DATA.invoiceNo,
         gstMode: (params.get('gstMode') as 'exclusive' | 'inclusive') || INITIAL_DATA.gstMode,
+        gstType: (params.get('gstType') as 'CGST_SGST' | 'IGST') || INITIAL_DATA.gstType || 'CGST_SGST',
         billedTo: {
           name: params.get('btName') || INITIAL_DATA.billedTo.name,
           address: params.get('btAddr') || INITIAL_DATA.billedTo.address,
