@@ -1,6 +1,7 @@
 export interface InvoiceItem {
   id: string;
   description: string;
+  quantity: number;
   value: number;
   hsn: string;
   gstRate: number;

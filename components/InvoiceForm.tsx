@@ -58,6 +58,7 @@ const InvoiceForm: React.FC<Props> = ({ data, onChange }) => {
     const newItem: InvoiceItem = {
       id: Date.now().toString(),
       description: "New Service",
+      quantity: 1,
       value: 0,
       hsn: "",
       gstRate: 18
@@ -355,9 +356,19 @@ const InvoiceForm: React.FC<Props> = ({ data, onChange }) => {
                     className="w-full p-2 border border-gray-200 rounded-lg text-sm font-medium focus:border-teal-500 focus:ring-1 focus:ring-teal-500 outline-none bg-white"
                   />
                   
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-4 gap-3">
                     <div className="bg-white p-2 rounded-lg border border-gray-200">
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Value (₹)</label>
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Quantity</label>
+                      <input 
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => handleItemChange(item.id, 'quantity', parseFloat(e.target.value) || 1)}
+                        className="w-full text-sm font-semibold text-gray-700 outline-none"
+                        min="1"
+                      />
+                    </div>
+                    <div className="bg-white p-2 rounded-lg border border-gray-200">
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">Total (₹)</label>
                       <input 
                         type="text"
                         inputMode="decimal"

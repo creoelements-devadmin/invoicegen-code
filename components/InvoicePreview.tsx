@@ -134,14 +134,15 @@ const InvoicePreview: React.FC<Props> = ({ data, id }) => {
             <table className="w-full mb-8 border-collapse">
                 <thead>
                     <tr className="bg-[#e6fffa] border-b border-black">
-                        <th className="font-bold text-black text-xs py-2 px-2 text-left" style={{ width: '28%' }}>Product</th>
-                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '11%' }}>Value</th>
-                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '9%' }}>HSN</th>
+                        <th className="font-bold text-black text-xs py-2 px-2 text-left" style={{ width: '24%' }}>Product</th>
+                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '7%' }}>Qty</th>
+                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '10%' }}>Value</th>
+                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '8%' }}>HSN</th>
                         <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '7%' }}>GST%</th>
-                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '9%' }}>CGST</th>
-                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '9%' }}>SGST</th>
-                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '9%' }}>IGST</th>
-                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '18%' }}>Amount</th>
+                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '8%' }}>CGST</th>
+                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '8%' }}>SGST</th>
+                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '8%' }}>IGST</th>
+                        <th className="font-bold text-black text-xs py-2 px-2 text-center" style={{ width: '20%' }}>Amount</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -165,6 +166,7 @@ const InvoicePreview: React.FC<Props> = ({ data, id }) => {
                         return (
                             <tr key={item.id} className="border-b border-black">
                                  <td className="text-black text-xs font-medium py-2 px-2 text-left">{item.description}</td>
+                                 <td className="text-black text-xs py-2 px-2 text-center">{item.quantity}</td>
                                  <td className="text-black text-xs py-2 px-2 text-center">{formatCurrency(baseValue)}</td>
                                  <td className="text-black text-xs py-2 px-2 text-center">{item.hsn}</td>
                                  <td className="text-black text-xs py-2 px-2 text-center">{item.gstRate}%</td>
@@ -185,6 +187,7 @@ const InvoicePreview: React.FC<Props> = ({ data, id }) => {
                 <tfoot>
                     <tr className="border-t-2 border-black">
                         <td className="text-black font-bold text-xs py-2 px-2 text-left">Total</td>
+                        <td className="text-black font-bold text-xs py-2 px-2 text-center"></td>
                         <td className="text-black font-bold text-xs py-2 px-2 text-center">{formatCurrency(subtotal)}</td>
                         <td className="text-black font-bold text-xs py-2 px-2 text-center"></td>
                         <td className="text-black font-bold text-xs py-2 px-2 text-center"></td>
